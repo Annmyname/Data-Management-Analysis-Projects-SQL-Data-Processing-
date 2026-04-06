@@ -1,0 +1,73 @@
+-- BÀI TẬP ĐIỂM DANH BUỔI THỰC HÀNH 3
+-- Phần III QuanLyBanHang từ câu 6 đến câu 19
+
+-- 6. In ra các số hóa đơn, trị giá hóa đơn bán ra trong ngày 1/1/2007 và ngày 2/1/2007
+SELECT SOHD, TRIGIA
+FROM HOADON
+WHERE (NGHD = '01/01/2007') OR (NGHD = '02/01/2007')
+
+-- 7. In ra các số hóa đơn, trị giá hóa đơn trong tháng 1/2007, sắp xếp theo ngày (tăng dần) và trị giá của hóa đơn (giảm dần)
+SELECT SOHD, TRIGIA
+FROM HOADON
+WHERE MONTH(NGHD) = 1 AND YEAR(NGHD) = 2007
+ORDER BY DAY(NGHD) ASC, TRIGIA DESC
+
+-- 8. In ra danh sách các khách hàng (MAKH, HOTEN) đã mua hàng trong ngày 1/1/2007
+SELECT KH.MAKH, HOTEN
+FROM KHACHHANG KH INNER JOIN HOADON HD
+ON HD.MAKH = KH.MAKH
+WHERE HD.NGHD = '1/1/2007'
+
+-- 9. In ra số hóa đơn, trị giá các hóa đơn do nhân viên có tên “Nguyen Van B” lập trong ngày 28/10/2006
+SET DATEFORMAT dmy
+SELECT SOHD, TRIGIA
+FROM HOADON HD INNER JOIN NHANVIEN NV
+ON HD.MANV = NV.MANV 
+WHERE (NV.HOTEN = 'NGUYEN VAN B') AND (NGHD = '28/10/2006')
+
+-- 10. In ra danh sách các sản phẩm (MASP,TENSP) được khách hàng có tên “Nguyen Van A” mua trong tháng 10/2006.
+SELECT DISTINCT SP.MASP, TENSP FROM SANPHAM SP, CTHD, HOADON HD, KHACHHANG KH
+WHERE( SP.MASP = CTHD.MASP 
+       AND CTHD.SOHD=HD.SOHD 
+	   AND HD.MAKH=KH.MAKH 
+	   AND KH.HOTEN = 'NGUYEN VAN A'
+	   AND (MONTH(NGHD)='10' AND YEAR(NGHD)='2006')
+	   )
+
+
+-- 11. Tìm các số hóa đơn đã mua sản phẩm có mã số “BB01” hoặc “BB02”.
+-- SOHD thuộc bảng HOADON
+-- MASP trong SANPHAM
+-- HOADON và SANPHAM liên kết qua CTHD
+SELECT SOHD
+FROM CTHD
+WHERE CTHD.MASP IN ('BB01', 'BB02')
+
+-- 12. Tìm các số hóa đơn đã mua sản phẩm có mã số “BB01” hoặc “BB02”, mỗi sản phẩm mua với số lượng từ 10 đến 20.
+SELECT SOHD
+FROM CTHD
+WHERE (CTHD.MASP IN ('BB01', 'BB02') 
+      AND CTHD.SL BETWEEN 10 AND 20)
+
+-- 13. Tìm các số hóa đơn mua cùng lúc 2 sản phẩm có mã số “BB01” và “BB02”, mỗi sản phẩm mua với số lượng từ 10 đến 20.
+-- MASP thuộc SANPHAM
+-- SOHD thuộc HOADON
+-- SL thuộc CTHD và hai bảng liên kết với nhau qua CTHD
+(SELECT SOHD
+FROM CTHD
+WHERE CTHD.MASP='BB01' AND SL BETWEEN 10 AND 20)
+INTERSECT
+(SELECT SOHD
+FROM CTHD
+WHERE CTHD.MASP='BB02' AND SL BETWEEN 10 AND 20)
+
+-- 14. In ra danh sách các sản phẩm (MASP,TENSP) do “Trung Quoc” sản xuất hoặc các sản phẩm được bán ra trong ngày 1/1/2007.
+SELECT DISTINCT SP.MASP, TENSP
+FROM SANPHAM SP, HOADON HD, CTHD
+WHERE NUOCSX = 'TRUNG QUOC' OR (CTHD.MASP = SP.MASP AND HD.SOHD = CTHD.SOHD AND NGHD = '1/1/2007')
+
+-- 15. In ra danh sách các sản phẩm (MASP,TENSP) không bán được.
+SELECT MASP, TENSP
+FROM SANPHAM
+WHERE MASP NOT IN (SELECT MASP
+                   FROM CTHD)
