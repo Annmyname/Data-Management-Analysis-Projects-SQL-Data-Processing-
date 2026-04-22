@@ -21,6 +21,3 @@ This project showcases my hands-on experience working with multiple structured d
 ### 🎯 Purpose
 
 To strengthen my SQL, data analysis, and problem-solving skills through practical exercises on real-world-like datasets.
-
-
-Nếu bạn muốn mình viết thêm **README “xịn hơn” (có demo query, structure folder, CV-ready GitHub)** mình làm luôn cho bạn 👍
